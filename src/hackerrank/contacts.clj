@@ -1,66 +1,43 @@
-(ns hackerrank.contacts)
+(ns hackerrank.contacts
+  (:require [clojure.string :as str])
+  (:gen-class))
 
 (defn make-jtrie
   []
   (java.util.HashMap.))
 
-(defn jtrie-lookup-prefix
-  [trie prefix]
-  (.get trie prefix))
-
-(defn jtrie-word?
-  [trie word]
-  (let [val (or (jtrie-lookup-prefix trie word)
-                {})]
-    (not (nil? (:word val)))))
-
 (defn add-to-jtrie
   [trie word]
-  (when-not (jtrie-word? trie word) 
-    (loop [word word]
-      (when-not (empty? word)
-        (if (nil? (.get trie word))
-          (.put trie word {:count 1})
-          (let [node (.get trie word)]
-            (.put trie word
-                  (assoc node :count (inc (:count node))))))
-        (recur (.substring word 0 (dec (count word))))))
-    (.put trie word (assoc (.get trie word)
-                           :word word))
-    nil))
+  (loop [word word]
+    (when-not (empty? word)
+      (.put trie word
+            (inc (or (.get trie word) 0)))
+      (recur (.substring word 0 (dec (count word))))))
+  nil)
 
 (defn jtrie-prefix-count
   [trie prefix]
-  (get (or (jtrie-lookup-prefix trie prefix)
-           {}) :count 0))
-
-(defn process-line
-  [trie line]
-  (let [args (read-string (str \( line \)))]
-    (when (= 2 (count args))
-      (let [[cmd word] args
-            word (str word)]
-        (case cmd
-          add (do (add-to-jtrie trie word)
-                  nil)
-          find (jtrie-prefix-count trie word))))))
+  (or (.get trie prefix)
+      0))
 
 (defn solve
   [in]
-  (let [trie (make-jtrie)
-        process (comp
-                 (map #(process-line trie %))
-                 (filter #(not (nil? %))))
-        col (sequence process (line-seq in))
-        *flush-on-newline* false]
-    (doseq [x col]
-      (println x))))
+  (let [count (Integer/parseInt (read-line))
+        trie (make-jtrie)]
+    (dotimes [_ count]
+      (let [line (read-line)
+            args (str/split line #" ")
+            [cmd word] args]
+        (case cmd
+          "add" (add-to-jtrie trie word)
+          "find" (println (jtrie-prefix-count trie word)))))))
 
 ;;(solve (java.io.BufferedReader. *in*))
 
 (defn solve-test
   []
-  (solve (clojure.java.io/reader
-          "resources/input02.txt"
-          ;;"resources/test-input.txt"
-          )))
+  (binding [*in* (clojure.java.io/reader
+              "resources/input02.txt"
+              ;;"resources/test-input.txt"
+              )]
+    (solve *in*)))
