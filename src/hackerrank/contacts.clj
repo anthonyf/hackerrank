@@ -1,22 +1,38 @@
 (ns hackerrank.contacts)
 
-(defn add-to-trie
-  [trie word]
-  (let []
-    (if (nil? (get-in trie [word :word] nil))
-      (let [trie (reduce (fn [trie prefix]
-                           (update-in trie [prefix :count] #((fnil inc 0) %)))
-                         trie
-                         (for [n (range (count word))]
-                             (.substring word 0 (inc n))))]
-        (assoc trie word
-               (merge (get trie word)
-                      {:word word})))
-      trie)))
+(defn make-jtrie
+  []
+  (java.util.HashMap.))
 
-(defn prefix-count
+(defn jtrie-lookup-prefix
+  [trie prefix]
+  (.get trie prefix))
+
+(defn jtrie-word?
   [trie word]
-  (get-in trie [word :count] 0))
+  (let [val (or (jtrie-lookup-prefix trie word)
+                {})]
+    (not (nil? (:word val)))))
+
+(defn add-to-jtrie
+  [trie word]
+  (when-not (jtrie-word? trie word) 
+    (loop [word word]
+      (when-not (empty? word)
+        (if (nil? (.get trie word))
+          (.put trie word {:count 1})
+          (let [node (.get trie word)]
+            (.put trie word
+                  (assoc node :count (inc (:count node))))))
+        (recur (.substring word 0 (dec (count word))))))
+    (.put trie word (assoc (.get trie word)
+                           :word word))
+    nil))
+
+(defn jtrie-prefix-count
+  [trie prefix]
+  (get (or (jtrie-lookup-prefix trie prefix)
+           {}) :count 0))
 
 (defn process-line
   [trie line]
@@ -25,21 +41,20 @@
       (let [[cmd word] args
             word (str word)]
         (case cmd
-          add (do (swap! trie add-to-trie word)
+          add (do (add-to-jtrie trie word)
                   nil)
-          find (prefix-count @trie word))))))
+          find (jtrie-prefix-count trie word))))))
 
 (defn solve
   [in]
-  (let [trie (atom {})
+  (let [trie (make-jtrie)
         process (comp
                  (map #(process-line trie %))
                  (filter #(not (nil? %))))
-        col (sequence process (line-seq in))]
+        col (sequence process (line-seq in))
+        *flush-on-newline* false]
     (doseq [x col]
-      (println x)
-      ;;(flush)
-      )))
+      (println x))))
 
 ;;(solve (java.io.BufferedReader. *in*))
 
