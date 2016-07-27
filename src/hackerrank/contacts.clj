@@ -2,35 +2,29 @@
   (:require [clojure.string :as str])
   (:gen-class))
 
-(defn make-jtrie
-  []
-  (java.util.HashMap.))
-
-(defn add-to-jtrie
+(defn add-to-trie
   [trie word]
-  (loop [word word]
-    (when-not (empty? word)
-      (.put trie word
-            (inc (or (.get trie word) 0)))
-      (recur (.substring word 0 (dec (count word))))))
-  nil)
+  (reduce (fn [trie prefix]
+            (update-in trie [prefix :count] #((fnil inc 0) %)))
+          trie
+          (for [n (range (count word))]
+            (.substring word 0 (inc n)))))
 
-(defn jtrie-prefix-count
-  [trie prefix]
-  (or (.get trie prefix)
-      0))
+(defn prefix-count
+  [trie word]
+  (get-in trie [word :count] 0))
 
 (defn solve
   [in]
   (let [count (Integer/parseInt (read-line))
-        trie (make-jtrie)]
+        trie (atom {})]
     (dotimes [_ count]
       (let [line (read-line)
             args (str/split line #" ")
             [cmd word] args]
         (case cmd
-          "add" (add-to-jtrie trie word)
-          "find" (println (jtrie-prefix-count trie word)))))))
+          "add" (swap! trie add-to-trie word)
+          "find" (println (prefix-count @trie word)))))))
 
 ;;(solve (java.io.BufferedReader. *in*))
 
