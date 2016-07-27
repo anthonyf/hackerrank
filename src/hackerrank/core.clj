@@ -1,7 +1,7 @@
 (ns hackerrank.core
+  (:require [hackerrank.contacts :as contacts])
   (:gen-class))
 
 (defn -main
-  "I don't do a whole lot ... yet."
   [& args]
-  (println "Hello, World!"))
+  (contacts/solve-test))
