@@ -7,8 +7,8 @@
   (reduce (fn [trie prefix]
             (update-in trie [prefix :count] #((fnil inc 0) %)))
           trie
-          (for [n (range (count word))]
-            (.substring word 0 (inc n)))))
+          (for [n (range 1 (inc (count word)))]
+            (.substring word 0 n))))
 
 (defn prefix-count
   [trie word]
@@ -16,15 +16,18 @@
 
 (defn solve
   [in]
-  (let [count (Integer/parseInt (read-line))
-        trie (atom {})]
-    (dotimes [_ count]
-      (let [line (read-line)
-            args (str/split line #" ")
-            [cmd word] args]
-        (case cmd
-          "add" (swap! trie add-to-trie word)
-          "find" (println (prefix-count @trie word)))))))
+  (let [line-count (Integer/parseInt (read-line))]
+    (reduce (fn [trie n]
+              (let [line (read-line)
+                    [cmd word] (str/split line #"\s+")]
+                (case cmd
+                  "add" (add-to-trie trie word)
+                  "find" (do (println (prefix-count trie word))
+                             trie))))
+            {}
+            (range line-count))
+    nil))
+
 
 ;;(solve (java.io.BufferedReader. *in*))
 
