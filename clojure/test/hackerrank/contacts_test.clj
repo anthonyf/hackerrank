@@ -27,7 +27,7 @@
                     "resources/output02.txt"))))
 
 (deftest solve-04-test
-  (testing "solve-04"
-    (is (test-solve "resources/input04.txt"
-                    "resources/output04.txt"))))
+  (time (testing "solve-04"
+          (is (test-solve "resources/input04.txt"
+                          "resources/output04.txt")))))
 
