@@ -8,7 +8,7 @@
             (update-in trie [prefix :count] #((fnil inc 0) %)))
           trie
           (for [n (range 1 (inc (count word)))]
-            (.substring word 0 n))))
+            (.substring #^String word 0 n))))
 
 (defn prefix-count
   [trie word]
@@ -16,16 +16,17 @@
 
 (defn solve
   [in]
-  (let [line-count (Integer/parseInt (read-line))]
-    (reduce (fn [trie n]
-              (let [line (read-line)
-                    [cmd word] (str/split line #"\s+")]
-                (case cmd
-                  "add" (add-to-trie trie word)
-                  "find" (do (println (prefix-count trie word))
-                             trie))))
-            {}
-            (range line-count))
+  (let [lines (line-seq in)
+        line-count (Integer/parseInt (first lines))
+        lines (take line-count (rest lines))]
+    (->> lines
+         (reduce (fn [trie line]
+                   (let [[cmd word] (str/split line #"\s+")]
+                     (case cmd
+                       "add" (add-to-trie trie word)
+                       "find" (do (println (prefix-count trie word))
+                                  trie))))
+                 {}))
     nil))
 
 
@@ -34,7 +35,8 @@
 (defn solve-test
   []
   (binding [*in* (clojure.java.io/reader
-              "resources/input02.txt"
-              ;;"resources/test-input.txt"
-              )]
+                  "resources/input02.txt"
+                  ;;"resources/test-input.txt"
+                  )]
     (solve *in*)))
+
