@@ -27,16 +27,10 @@
                        "find" (do (println (prefix-count trie word))
                                   trie))))
                  {}))
+    (flush)
     nil))
 
 
 ;;(solve (java.io.BufferedReader. *in*))
 
-(defn solve-test
-  []
-  (binding [*in* (clojure.java.io/reader
-                  "resources/input02.txt"
-                  ;;"resources/test-input.txt"
-                  )]
-    (solve *in*)))
 

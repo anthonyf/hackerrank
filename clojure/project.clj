@@ -7,9 +7,9 @@
   :main ^:skip-aot hackerrank.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}}
-  :jvm-opts [;;"-Xms512m" "-Xmx512m"
-             "-Dcom.sun.management.jmxremote"
-             "-Dcom.sun.management.jmxremote.ssl=false"
-             "-Dcom.sun.management.jmxremote.authenticate=false"
-             "-Dcom.sun.management.jmxremote.port=43210"]
+  ;; :jvm-opts [;;"-Xms512m" "-Xmx512m"
+  ;;            "-Dcom.sun.management.jmxremote"
+  ;;            "-Dcom.sun.management.jmxremote.ssl=false"
+  ;;            "-Dcom.sun.management.jmxremote.authenticate=false"
+  ;;            "-Dcom.sun.management.jmxremote.port=43210"]
   :global-vars {*warn-on-reflection* true})

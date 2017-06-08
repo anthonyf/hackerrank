@@ -3,5 +3,4 @@
   (:gen-class))
 
 (defn -main
-  [& args]
-  (contacts/solve-test))
+  [& args])
