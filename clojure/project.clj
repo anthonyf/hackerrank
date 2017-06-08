@@ -11,4 +11,5 @@
              "-Dcom.sun.management.jmxremote"
              "-Dcom.sun.management.jmxremote.ssl=false"
              "-Dcom.sun.management.jmxremote.authenticate=false"
-             "-Dcom.sun.management.jmxremote.port=43210"])
+             "-Dcom.sun.management.jmxremote.port=43210"]
+  :global-vars {*warn-on-reflection* true})
